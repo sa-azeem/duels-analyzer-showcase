@@ -3,6 +3,7 @@ import altair as alt
 from datetime import timedelta
 import plotly.express as px
 import datetime
+import numpy as np
 import streamlit as st
 
 
@@ -130,7 +131,7 @@ def get_duels(session, duel_tokens, my_player_Id, loading_bar):
 
                 data_dict['Opponent Id'].append(
                     game['teams'][other]['players'][0]['playerId'])
-                data_dict['Opponent Country'].append(helpers.get_country_name(
+                data_dict['Opponent Country'].append(get_country_name(
                     game['teams'][other]['players'][0]['countryCode']))
 
                 if game['teams'][me]['players'][0]['progressChange'] is not None:
