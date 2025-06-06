@@ -1,4 +1,4 @@
-**duels-analyzer-showcase**
+# Duels Analyzer Showcase
 
 [Live Demo](https://duels-analyzer-showcase.streamlit.app)
 
@@ -13,7 +13,7 @@ If you want to analyse your own games, please go [here](https://duels-analyzer.s
 2. [Data & Analysis](#data--analysis)
 3. [How It Works](#how-it-works)
 4. [Getting Started](#getting-started)
-5. [Languages/libraries Used](#Languages/libraries-used)
+5. [Libraries Used](#libraries-used)
 6. [Screenshots](#screenshots)
 
 ---
@@ -103,7 +103,7 @@ If you want to run it in your local, then
 
 ---
 
-## Language/libraries Used
+## Libraries Used
 
 - **Python**
 - **Streamlit** for web-based dashboard
