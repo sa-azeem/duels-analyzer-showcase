@@ -4,7 +4,7 @@ import helpers
 import plotly.express as px
 import datetime
 import pickle
-st.title('Welcome to Duels Analyzer')
+st.title('Welcome to Duels Analyzer Showcase')
 
 data_dict = {}
 if 'data_dict' not in st.session_state:
