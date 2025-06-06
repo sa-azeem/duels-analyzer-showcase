@@ -1,9 +1,9 @@
 **duels-analyzer-showcase**
 
-[Live Demo](https://www.duels-analyzer-showcase.streamlit.io)
+[Live Demo](https://www.duels-analyzer-showcase.streamlit.app)
 
 A data‐driven dashboard that gathers and visualizes statistics from my GeoGuessr games.  
-If you want to analyse your own games, please go [here](https://www.duels-analyzer.streamlit.io).
+If you want to analyse your own games, please go [here](https://www.duels-analyzer.streamlit.app).
 
 ---
 
@@ -90,7 +90,7 @@ If you want to analyse your own games, please go [here](https://www.duels-analyz
 
 ## Getting Started
 
-It is already running at streamlit cloud, you can just go there ([https://www.duels-analyzer-showcase.streamlit.io](https://www.duels-analyzer-showcase.streamlit.io) )
+It is already running at streamlit cloud, you can just go there [https://www.duels-analyzer-showcase.streamlit.app](https://www.duels-analyzer-showcase.streamlit.app)
 
 If you want to run it in your local, then
 
@@ -118,21 +118,20 @@ If you want to run it in your local, then
 
 > _Below are a few static previews. In the live Streamlit app, each chart is fully interactive (zoomable, hoverable, etc.)._
 
-1. **Dashboard Overview**
+1. **Dashboard Summary**
 
-   ![](https://raw.githubusercontent.com/sa-azeem/duels-analyzer-showcase/testing/assets/overview.png)  
-   _Top‐row cards show Total Duels, Win Rate, and Average Score. A line chart plots monthly average scores._
+   ![ ](/Screenshots/summary.png)
 
-2. **Win/Loss Distribution**
+2. **Average distance by country**
 
-   ![](https://raw.githubusercontent.com/sa-azeem/duels-analyzer-showcase/testing/assets/win_loss.png)  
-   _A simple bar chart comparing how many Duels you’ve won vs. lost._
+   ![ ](/Screenshots/country_vs_distance.png)
 
-3. **Map Performance**
+3. **Compare any two metrices**
 
-   ![](https://raw.githubusercontent.com/sa-azeem/duels-analyzer-showcase/testing/assets/map_performance.png)  
-   _Shows your average score on each map—so you know which maps to practice more._
+   ![ ](/Screenshots/compare_metrices.png)
 
-_If those previews don’t load, don’t worry! Just run the app locally to see up‐to‐date visuals._
+4. **Number of games played**
+
+   ![ ](/Screenshots/games_played_by_week.png)
 
 ---
