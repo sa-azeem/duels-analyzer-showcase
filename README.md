@@ -1,18 +1,138 @@
-# duels-analyzer
+**duels-analyzer-showcase**
 
-I created this tool to help you visualise your ranked Duels statistics of Geoguessr.
+[Live Demo](https://www.duels-analyzer-showcase.streamlit.io)
 
-Us it online at https://duels-analyzer.streamlit.app/
+A data‐driven dashboard that gathers and visualizes statistics from my GeoGuessr games.  
+If you want to analyse your own games, please go [here](https://www.duels-analyzer.streamlit.io).
 
+---
 
-I am aware of the issue that it doesn't work a lot of times. Try going incognito.
+## Table of Contents
 
-Alternatively you can run it in your local, it works perfectly fine there. For that:
+1. [Features](#features)
+2. [Data & Analysis](#data--analysis)
+3. [How It Works (At a Glance)](#how-it-works-at-a-glance)
+4. [Getting Started](#getting-started)
+5. [Technologies Used](#technologies-used)
+6. [Screenshots](#screenshots)
 
-Clon the repo/ download the code
+---
 
-Open the command prompt and do
+## Features
 
-`pip install -r requirements.txt` to install the dependencies
+- **Player Performance Metrics**
 
-Then do `streamlit run main.py`
+  - Total games played
+  - Win/loss counts and win rate
+  - Average score per Duel
+
+- **Trend Analysis Over Time**  
+  Visualize how score, win rate, and ranking have changed over weeks or months.
+
+- **Country-based Insights**  
+  See which countries or regions give you the highest average scores or most wins.
+
+- **Interactive Charts & Tables**  
+  Built with Plotly and Streamlit, hover for precise values, zoom into time stretches, or filter by date or map.
+
+- **Self-Contained Data Pipeline**  
+  All data cleaning, aggregation, and calculations happen under the hood; you get ready‐to‐read charts without worrying about Python scripts.
+
+---
+
+## Data & Analysis
+
+1. **Data Source**
+
+   - Base data contains a dictionary containing following data points for each round played:
+     - Date and time of the match
+     - My score
+     - My distance to actual location
+     - Country
+       and many more...
+
+2. **Key Computations**
+   - **Win Rate**  
+     `(Number of Wins) ÷ (Total Duels) × 100`.
+   - **Average Score & Score Distribution**  
+     Compute your mean, median, and quartiles of scores; visualize as histograms or box plots.
+   - **Time Series Trends**  
+     Group Duels by week or month to chart how your average score and win rate changed over time.
+   - **Country‐Based Performance**  
+     Group Duels by country and compute average score → highlights “best” and “weakest” countries.
+
+---
+
+## How It Works
+
+1. **Data cleaning**
+   - Convert raw JSON into a flat Pandas DataFrame.
+   - Extract key columns:
+     - `date` (timestamp of match)
+     - `score` (your points)
+     - `opponent` (opponent’s username/score)
+   - Derive new columns:
+     - `win` (boolean: did you finish 1st?)
+     - `week` and `month` (for grouping).
+2. **Compute Metrics**
+   Using Pandas groupbys, calculate totals, means, and percentages for:
+   - Win/Loss counts
+   - Average score per country
+   - Score trends by month
+3. **Visualize**  
+   Streamlit displays:
+   - A header summary (cards with total Duels, win rate, average score)
+   - Line charts for time‐series trends
+   - Bar charts for map performance
+   - Histograms of score distributions
+
+---
+
+## Getting Started
+
+It is already running at streamlit cloud, you can just go there ([https://www.duels-analyzer-showcase.streamlit.io](https://www.duels-analyzer-showcase.streamlit.io) )
+
+If you want to run it in your local, then
+
+1. **Clone/download the repository**
+2. **Install dependencies & run**
+   ```bash
+   pip install -r requirements.txt
+   streamlit run main.py
+   ```
+
+---
+
+## Language/libraries Used
+
+- **Python**
+- **Streamlit** for web-based dashboard
+- **Pandas** for data manipulation
+- **Plotly and Matplotlib** for interactive charts (line, bar, histogram)
+- **NumPy** for numerical operations
+- **pickle** to read JSON from `saved_data.pkl`
+
+---
+
+## Screenshots
+
+> _Below are a few static previews. In the live Streamlit app, each chart is fully interactive (zoomable, hoverable, etc.)._
+
+1. **Dashboard Overview**
+
+   ![](https://raw.githubusercontent.com/sa-azeem/duels-analyzer-showcase/testing/assets/overview.png)  
+   _Top‐row cards show Total Duels, Win Rate, and Average Score. A line chart plots monthly average scores._
+
+2. **Win/Loss Distribution**
+
+   ![](https://raw.githubusercontent.com/sa-azeem/duels-analyzer-showcase/testing/assets/win_loss.png)  
+   _A simple bar chart comparing how many Duels you’ve won vs. lost._
+
+3. **Map Performance**
+
+   ![](https://raw.githubusercontent.com/sa-azeem/duels-analyzer-showcase/testing/assets/map_performance.png)  
+   _Shows your average score on each map—so you know which maps to practice more._
+
+_If those previews don’t load, don’t worry! Just run the app locally to see up‐to‐date visuals._
+
+---
