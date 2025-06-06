@@ -1,9 +1,9 @@
 **duels-analyzer-showcase**
 
-[Live Demo](https://www.duels-analyzer-showcase.streamlit.app)
+[Live Demo](https://duels-analyzer-showcase.streamlit.app)
 
 A data‐driven dashboard that gathers and visualizes statistics from my GeoGuessr games.  
-If you want to analyse your own games, please go [here](https://www.duels-analyzer.streamlit.app).
+If you want to analyse your own games, please go [here](https://duels-analyzer.streamlit.app).
 
 ---
 
@@ -11,9 +11,9 @@ If you want to analyse your own games, please go [here](https://www.duels-analyz
 
 1. [Features](#features)
 2. [Data & Analysis](#data--analysis)
-3. [How It Works (At a Glance)](#how-it-works-at-a-glance)
+3. [How It Works](#how-it-works)
 4. [Getting Started](#getting-started)
-5. [Technologies Used](#technologies-used)
+5. [Languages/libraries Used](#Languages/libraries-used)
 6. [Screenshots](#screenshots)
 
 ---
@@ -90,7 +90,7 @@ If you want to analyse your own games, please go [here](https://www.duels-analyz
 
 ## Getting Started
 
-It is already running at streamlit cloud, you can just go there [https://www.duels-analyzer-showcase.streamlit.app](https://www.duels-analyzer-showcase.streamlit.app)
+It is already running at streamlit cloud, you can just go there [https://www.duels-analyzer-showcase.streamlit.app](https://duels-analyzer-showcase.streamlit.app)
 
 If you want to run it in your local, then
 
