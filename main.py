@@ -4,8 +4,11 @@ import helpers
 import plotly.express as px
 import datetime
 import pickle
+
+
 st.title('Welcome to Duels Analyzer Showcase')
 
+# I have already generated a dictionary with all the data, saved as 'saved_data.pkl'
 data_dict = {}
 if 'data_dict' not in st.session_state:
     st.session_state['data_dict'] = {}
@@ -14,12 +17,13 @@ if 'data_dict' not in st.session_state:
     st.session_state['data_dict'] = data_dict
 else:
     data_dict = st.session_state['data_dict']
-df = pd.DataFrame()
+
 df = pd.DataFrame(data_dict)
 num_of_games = len(df['Game Id'].unique())
 
 if not df.empty:
     df = helpers.datetime_processing(df)
+
 submitted = False
 option = st.radio(
     'How many games you want to analyze?',
@@ -27,9 +31,8 @@ option = st.radio(
 if option == 'Recent games':
     with st.form("option_form"):
         slider_value = st.slider("Select how many recent games you want to analyse:",
-                                 min_value=1, max_value=len(num_of_games), value=len(num_of_games))
+                                 min_value=1, max_value=num_of_games, value=int(num_of_games/10))
         submitted = st.form_submit_button("Submit")
-
 elif option == 'By Date':
     with st.form("option_form"):
         today = datetime.date.today()
@@ -40,6 +43,7 @@ elif option == 'By Date':
 else:
     with st.form("option_form"):
         submitted = st.form_submit_button("Submit")
+
 if 'submitted' not in st.session_state:
     st.session_state['submitted'] = False
 if (st.session_state['submitted'] or submitted) and not df.empty:
@@ -58,12 +62,12 @@ if (st.session_state['submitted'] or submitted) and not df.empty:
 
     by_country = helpers.groupby_country(df_filtered)
     top_n = st.slider('Select how many countries you want to see (by round count):', min_value=1, max_value=len(
-        by_country), value=20, step=1, help='This helps filter out the countries that occur very rarely.')
+        by_country), value=min(20,len(
+        by_country)), step=1, help='This helps filter out the countries that occur very rarely.')
     top_n_countries = by_country.sort_values(
         by='Number of Rounds', ascending=False).head(top_n)
 
     if not df_filtered.empty:
-
         st.markdown('### Summary')
         with st.expander(""):
             col1, col2 = st.columns(2)
@@ -74,22 +78,23 @@ if (st.session_state['submitted'] or submitted) and not df.empty:
             with col2:
                 st.markdown(f"# {df_filtered.iloc[0]['Your Rating']}")
                 st.write(f"Duels Rating")
-
-            best_country_by_win_rate = top_n_countries.sort_values(
-                by='Win Percentage', ascending=False).reset_index().head(1)
-            worst_country_by_win_rate = top_n_countries.sort_values(
-                by='Win Percentage', ascending=True).reset_index().head(1)
-            col1, col2 = st.columns(2)
-            with col1:
-                st.markdown(
-                    f"# {best_country_by_win_rate.iloc[0]['Country']}")
-                st.write(
-                    f"Best win rate:\t{best_country_by_win_rate.iloc[0]['Win Percentage']} %")
-            with col2:
-                st.markdown(
-                    f"# {worst_country_by_win_rate.iloc[0]['Country']}")
-                st.write(
-                    f"Worst win rate:\t{worst_country_by_win_rate.iloc[0]['Win Percentage']} %")
+                
+            country_by_win_rate = top_n_countries.sort_values(by='Win Percentage', ascending=False).reset_index()
+            best_country_by_win_rate = country_by_win_rate.head(1)
+            worst_country_by_win_rate = country_by_win_rate.tail(1)
+            
+            
+            tags=['Best','Worst']
+            countries=[best_country_by_win_rate,worst_country_by_win_rate]
+            cols=st.columns(2)
+            for i in range(2):
+                with cols[i]:
+                    st.markdown(
+                        f"# {countries[i].iloc[0]['Country']}")
+                    st.write(
+                        f"{tags[i]} win rate:\t{countries[i].iloc[0]['Win Percentage']} %")
+            
+            
             col1, col2 = st.columns(2)
             with col1:
                 st.markdown(
@@ -102,6 +107,7 @@ if (st.session_state['submitted'] or submitted) and not df.empty:
 
             date_option = st.radio(
                 "A", ("Week", "Month", "Year"), horizontal=True, label_visibility="collapsed", key='98465')
+            
             col1, col2 = st.columns(2)
             with col1:
                 helpers.create_line_chart(
