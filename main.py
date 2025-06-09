@@ -60,14 +60,14 @@ if (st.session_state['submitted'] or submitted) and not df.empty:
     else:
         df_filtered = df.copy()
 
-    by_country = helpers.groupby_country(df_filtered)
-    top_n = st.slider('Select how many countries you want to see (by round count):', min_value=1, max_value=len(
-        by_country), value=min(20,len(
-        by_country)), step=1, help='This helps filter out the countries that occur very rarely.')
-    top_n_countries = by_country.sort_values(
-        by='Number of Rounds', ascending=False).head(top_n)
+    if not df_filtered.empty:    
+        by_country = helpers.groupby_country(df_filtered)
+        top_n = st.slider('Select how many countries you want to see (by round count):', min_value=1, max_value=len(
+            by_country), value=min(20,len(
+            by_country)), step=1, help='This helps filter out the countries that occur very rarely.')
+        top_n_countries = by_country.sort_values(
+            by='Number of Rounds', ascending=False).head(top_n)
 
-    if not df_filtered.empty:
         st.markdown('### Summary')
         with st.expander(""):
             col1, col2 = st.columns(2)
@@ -105,9 +105,9 @@ if (st.session_state['submitted'] or submitted) and not df.empty:
                     f"# {round(df_filtered['Your Distance'].mean())}")
                 st.write(f"Average Distance (km)")
 
+
             date_option = st.radio(
-                "A", ("Week", "Month", "Year"), horizontal=True, label_visibility="collapsed", key='98465')
-            
+                "A", ("Week", "Month", "Year"), horizontal=True, label_visibility="collapsed", key='98465')            
             col1, col2 = st.columns(2)
             with col1:
                 helpers.create_line_chart(
@@ -126,44 +126,39 @@ if (st.session_state['submitted'] or submitted) and not df.empty:
         st.markdown('### Detailed Analysis')
         with st.expander(""):
             metric = st.radio(
-                'Choose a metric:', ('Score', 'Distance', 'Score Difference', 'Win Percentage'))
-            if metric == 'Score':
-                metric_col = 'Your Score'
-            else:
-                metric_col = metric
+                'Choose a metric:', ('Your Score', 'Your Distance', 'Score Difference', 'Win Percentage'))
 
             st.markdown(f"#### Average {metric} by Country")
             helpers.display_country_scores_map(
-                top_n_countries.reset_index(), "Country", metric_col)
+                top_n_countries.reset_index(), "Country", metric)
 
             helpers.sorted_bar_chart(
-                top_n_countries, 'Country', metric_col)
+                top_n_countries, 'Country', metric)
 
             st.markdown(f"#### Average {metric} by Rounds")
             by_round = helpers.groupby_round(df_filtered)
             helpers.sorted_bar_chart(
-                by_round, 'Round Number', metric_col)
+                by_round, 'Round Number', metric)
 
             st.markdown(f"#### Average {metric} by Time Periods")
-            helpers.create_binned_histogram(df_filtered, metric_col)
+            helpers.create_binned_histogram(df_filtered, metric)
 
             st.markdown(
                 f"#### Average {metric} against players from other Countries")
             by_country_against = helpers.groupby_country_against(
                 df_filtered)
             helpers.sorted_bar_chart(
-                by_country_against, 'Opponent Country', metric_col)
+                by_country_against, 'Opponent Country', metric)
 
             st.markdown(f"#### All your guesses, colored by {metric}")
-            helpers.create_map(df_filtered, metric_col)
+            helpers.create_map(df_filtered, metric)
 
             st.markdown(f"#### {metric} distribution by Country")
             df_filtered_only_top_countries = df_filtered.reset_index()[df_filtered.reset_index(
             )['Country'].isin(top_n_countries.reset_index()['Country'].tolist())]
 
-            metric_for_box = metric_col if metric_col != 'Distance' else 'Your Distance'
             fig = px.box(data_frame=df_filtered_only_top_countries.reset_index(
-            ), x=metric_for_box, y='Country')
+            ), x=metric, y='Country')
             st.plotly_chart(
                 fig, help='If this is feels cramped, try decreasing the top country parameter at the top')
 
@@ -172,7 +167,7 @@ if (st.session_state['submitted'] or submitted) and not df.empty:
             st.markdown('#### Comparison between different metrices')
             col1, col2, col3 = st.columns(3)
             options = ['Your Score', 'Opponent Score', 'Score Difference',
-                       'Win Percentage', 'Distance', 'Number of Rounds']
+                       'Win Percentage', 'Your Distance', 'Number of Rounds']
             with col1:
                 choice1 = st.selectbox("Metric 1", options, index=0)
             with col2:
@@ -182,7 +177,8 @@ if (st.session_state['submitted'] or submitted) and not df.empty:
             show_avg_lines = st.checkbox(
                 'Show average lines', value=True)
             helpers.scatter_scores(
-                top_n_countries, choice1, choice2, show_avg_lines, color=choice3)
+                top_n_countries, choice1, choice2, show_avg_lines, color_=choice3)
+
 
             st.markdown('#### Comparison between different duel types')
             col1, col2, col3 = st.columns(3)
@@ -196,7 +192,7 @@ if (st.session_state['submitted'] or submitted) and not df.empty:
             with col3:
                 choice3 = st.selectbox("Metric", options, index=0)
             show_avg_lines = st.checkbox(
-                'Show average lines', value=True, key='sdfssc')
+                'Show average lines', value=True, key='lost_the_key')
             helpers.scatter_by_game_type(
                 top_n_countries, df_filtered, choice1, choice2, choice3, show_avg_lines)
 

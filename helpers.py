@@ -183,13 +183,13 @@ def datetime_processing(df):
 
 def groupby_country(df):
     by_country = df.groupby('Country').agg({'Your Score': 'mean', 'Opponent Score': 'mean',
-                                            'Score Difference': 'mean', 'Win Percentage': 'mean', 'Country': 'count', 'Your Distance': 'mean'})
+                                            'Score Difference': 'mean', 'Win Percentage': 'mean', 'Country': 'count', 'Your Distance': 'mean','Opponent Distance': 'mean'})
     by_country.rename(
-        columns={'Country': 'Number of Rounds', 'Your Distance': 'Distance'}, inplace=True)
+        columns={'Country': 'Number of Rounds'}, inplace=True)
     by_country['Win Percentage'] = by_country['Win Percentage'].apply(
         lambda x: round(x, 2))
-    by_country[['Your Score', 'Opponent Score', 'Score Difference', 'Distance']] = by_country[[
-        'Your Score', 'Opponent Score', 'Score Difference', 'Distance']].apply(round)
+    by_country[['Your Score', 'Opponent Score', 'Score Difference', 'Your Distance', 'Opponent Distance']] = by_country[[
+        'Your Score', 'Opponent Score', 'Score Difference', 'Your Distance', 'Opponent Distance']].apply(round)
 
     new_cols = ['Number of Rounds'] + \
         [col for col in by_country.columns if col != 'Number of Rounds']
@@ -458,7 +458,7 @@ def get_country_name(country_code):
 def display_country_scores_map(df, country_col, score_col):
     # reversing color is needed for distance because more is less in case of distance
     color_ = px.colors.sequential.Turbo_r
-    if score_col == 'Distance':
+    if score_col == 'Your Distance':
         color_ = px.colors.sequential.Turbo
     fig = px.choropleth(
         df,
@@ -476,7 +476,7 @@ def alt_chart(data, x, y):
     st.altair_chart(c)
 
 
-def sorted_bar_chart(data, x, y, color_=False):
+def sorted_bar_chart(data, x, y, color_=alt.Color()):
     col1, col2 = st.columns(2)
     with col1:
         checkbox1 = st.checkbox("Sort", key='1'+x+y)
@@ -489,24 +489,24 @@ def sorted_bar_chart(data, x, y, color_=False):
     sorted_data = data.sort_values(
         by=y if checkbox1 else x, ascending=not checkbox2)
     c = alt.Chart(sorted_data).mark_bar().encode(
-        x=alt.X(x, sort=None, type='nominal'), y=y)
-    if color_:
-        c = alt.Chart(sorted_data).mark_bar().encode(
-            x=alt.X(x, sort=None, type='nominal'), y=y, color=color_)
+        x=alt.X(x, sort=None, type='nominal'), y=y,color=color_)
+    # if color_:
+    #     c = alt.Chart(sorted_data).mark_bar().encode(
+    #         x=alt.X(x, sort=None, type='nominal'), y=y, color=color_)
     st.altair_chart(c)
 
 
 def groupby_round(df):
     by_round = df.groupby('Round Number').agg(
-        {'Your Score': 'mean', 'Opponent Score': 'mean', 'Round Number': 'count', 'Your Distance': 'mean'})
+        {'Your Score': 'mean', 'Opponent Score': 'mean', 'Round Number': 'count', 'Your Distance': 'mean', 'Opponent Distance': 'mean'})
     by_round.rename(columns={
-                    'Round Number': 'Number of Rounds', 'Your Distance': 'Distance'}, inplace=True)
+                    'Round Number': 'Number of Rounds'}, inplace=True)
     by_round['Score Difference'] = by_round['Your Score'] - \
         by_round['Opponent Score']
     by_round['Win Percentage'] = df.groupby('Round Number')[['Your Score', 'Opponent Score']].apply(
         lambda x: (x['Your Score'] > x['Opponent Score']).mean()*100).apply(lambda x: round(x, 2))
-    by_round[['Your Score', 'Opponent Score', 'Score Difference', 'Distance']] = by_round[[
-        'Your Score', 'Opponent Score', 'Score Difference', 'Distance']].apply(round)
+    by_round[['Your Score', 'Opponent Score', 'Score Difference', 'Your Distance','Opponent Distance']] = by_round[[
+        'Your Score', 'Opponent Score', 'Score Difference', 'Your Distance','Opponent Distance']].apply(round)
     # new_cols=['Number of Rounds']+[col for col in by_round.columns if col != 'Number of Rounds']
     # by_round=by_round[new_cols]
     return by_round
@@ -528,23 +528,13 @@ def groupby_date(df, date_options):
 
 
 def create_binned_histogram(df,  metric_col):
-    date_col = 'Date'
-    if metric_col == 'Distance':
-        metric_col = 'Your Distance'
-    elif metric_col == 'Score Difference':
-        df['Score Difference'] = df['Your Score']-df['Opponent Score']
-    df['Win Percentage'] = (df['Your Score'] > df['Opponent Score']).apply(
-        lambda x: int(x)*100)
-    df[date_col] = pd.to_datetime(df[date_col])
     date_option = st.radio(
         "Bin by:",
         ("Week", "Month", "Year"),
         horizontal=True,
         label_visibility="collapsed"
     )
-
     df['Date'] = pd.to_datetime(df['Date'])
-
     period_map = {
         'Week': 'W',
         'Month': 'M',
@@ -564,15 +554,15 @@ def create_binned_histogram(df,  metric_col):
 
 def groupby_country_against(df):
     by_country_against = df.groupby('Opponent Country').agg(
-        {'Your Score': 'mean', 'Opponent Score': 'mean', 'Country': 'count', 'Your Distance': 'mean'})
+        {'Your Score': 'mean', 'Opponent Score': 'mean', 'Country': 'count', 'Your Distance': 'mean', 'Opponent Distance': 'mean'})
     by_country_against.rename(
-        columns={'Country': 'Number of Rounds', 'Your Distance': 'Distance'}, inplace=True)
+        columns={'Country': 'Number of Rounds'}, inplace=True)
     by_country_against['Score Difference'] = by_country_against['Your Score'] - \
         by_country_against['Opponent Score']
     by_country_against['Win Percentage'] = df.groupby('Opponent Country')[['Your Score', 'Opponent Score']].apply(
         lambda x: (x['Your Score'] > x['Opponent Score']).mean()*100).apply(lambda x: round(x, 2))
-    by_country_against[['Your Score', 'Opponent Score', 'Score Difference', 'Distance']] = by_country_against[[
-        'Your Score', 'Opponent Score', 'Score Difference', 'Distance']].apply(round)
+    by_country_against[['Your Score', 'Opponent Score', 'Score Difference', 'Your Distance','Opponent Distance']] = by_country_against[[
+        'Your Score', 'Opponent Score', 'Score Difference', 'Your Distance','Opponent Distance']].apply(round)
 
     return by_country_against
 
@@ -581,9 +571,8 @@ def create_map(df, metric_col):
     lat_col = 'Your Latitude'
     lon_col = 'Your Longitude'
     color_ = px.colors.sequential.Turbo_r
-    if metric_col == 'Distance':
+    if metric_col in ['Your Distance','Opponent Distance']:
         color_ = px.colors.sequential.Turbo
-        metric_col = 'Your Distance'
     fig = px.scatter_geo(
         df,
         lat=lat_col,
@@ -622,36 +611,32 @@ def create_line_chart(df,  metric_col, date_option):
     st.plotly_chart(fig, use_container_width=True)
 
 
-def scatter_scores(df, col_a, col_b, show_avg_lines, color=None):
+def scatter_scores(df, col_a, col_b, show_avg_lines, color_=None):
     # send with index as countries
+    # for generating labels of 20% countries else it feels cramped
     labels_ = df.index.map(
         lambda x: x if df.index.get_loc(x) % 5 == 0 else "")
     fig = px.scatter(data_frame=df.reset_index(), x=col_a, y=col_b, text=labels_,
-                     hover_name='Country', color=color, color_continuous_scale='RdBu')
+                     hover_name='Country', color=color_, color_continuous_scale='RdBu')
     fig.update_layout(coloraxis_colorbar_title_side='bottom')
     fig.update_coloraxes(colorbar_title_text='',
                          colorbar_xpad=0, colorbar_thickness=5)
     if (show_avg_lines):
-        fig.add_shape(
-            type="line",
-            x0=df[col_a].min(), y0=df[col_b].mean(), x1=df[col_a].max(), y1=df[col_b].mean(),
-            line=dict(color='green', width=2, dash="dot"),
-            xref="x", yref="y"
-        )
-        # vertical line
-        fig.add_shape(
-            type="line",
-            x0=df[col_a].mean(), y0=df[col_b].min(), x1=df[col_a].mean(), y1=df[col_b].max(),
-            line=dict(color='green', width=2, dash="dot"),
-            xref="x", yref="y"
-        )
+        co_ords=[[df[col_a].min(),df[col_b].mean(),df[col_a].max(),df[col_b].mean()],[df[col_a].mean(),df[col_b].min(),df[col_a].mean(),df[col_b].max()]]
+        
+        for co_ord in co_ords:
+            fig.add_shape(
+                type="line",
+                x0=co_ord[0], y0=co_ord[1], x1=co_ord[2], y1=co_ord[3],
+                line=dict(color='green', width=2, dash="dot"),
+                xref="x", yref="y"
+            )
     fig.update_traces(textposition='top center')
     # fig.update_layout(yaxis_range=[0,5000])
     # fig.update_layout(xaxis_range=[0,5000])
     size_ = 600
     fig.update_layout(width=size_, height=size_)
     st.plotly_chart(fig, use_container_width=False)
-
 
 def create_line_chart_games_played(df,  date_option):
     date_option = st.radio(
@@ -690,43 +675,16 @@ def scatter_by_game_type(top_n_countries, df, col_a, col_b, metric_col, show_avg
         df_a = df_a.groupby('Country')[metric_col].count()
         df_b = df_b.groupby('Country')[metric_col].count()
     else:
-        if metric_col == 'Distance':
-            metric_col = 'Your Distance'
         df_a = df_a.groupby('Country')[metric_col].mean()
         df_b = df_b.groupby('Country')[metric_col].mean()
-
+        
+    # when user selects the same metric for both columns
     if col_a == col_b:
         col_a = col_a+' A'
         col_b = col_b+' B'
-
     df_a.rename(col_a, inplace=True)
     df_b.rename(col_b, inplace=True)
     df = pd.concat([df_a, df_b], axis=1)
-
-    labels_ = df.index.map(
-        lambda x: x if df.index.get_loc(x) % 5 == 0 else "")
-    fig = px.scatter(data_frame=df.reset_index(), x=col_a, y=col_b, text=labels_,
-                     hover_name='Country', color=color, color_continuous_scale='RdBu')
-    fig.update_layout(coloraxis_colorbar_title_side='bottom')
-    fig.update_coloraxes(colorbar_title_text='',
-                         colorbar_xpad=0, colorbar_thickness=5)
-    if (show_avg_lines):
-        fig.add_shape(
-            type="line",
-            x0=df[col_a].min(), y0=df[col_b].mean(), x1=df[col_a].max(), y1=df[col_b].mean(),
-            line=dict(color='green', width=2, dash="dot"),
-            xref="x", yref="y"
-        )
-        # vertical line
-        fig.add_shape(
-            type="line",
-            x0=df[col_a].mean(), y0=df[col_b].min(), x1=df[col_a].mean(), y1=df[col_b].max(),
-            line=dict(color='green', width=2, dash="dot"),
-            xref="x", yref="y"
-        )
-    fig.update_traces(textposition='top center')
-    # fig.update_layout(yaxis_range=[0,5000])
-    # fig.update_layout(xaxis_range=[0,5000])
-    size_ = 600
-    fig.update_layout(width=size_, height=size_)
-    st.plotly_chart(fig, use_container_width=False)
+    
+    scatter_scores(df, col_a, col_b, show_avg_lines, color)
+    
